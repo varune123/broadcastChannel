@@ -1,0 +1,21 @@
+{
+  "name": "info1601demo",
+  "version": "1.0.0",
+  "description": "[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/uwidcit/info1601demo)",
+  "main": "index.js",
+  "scripts": {
+    "login": "firebase login --no-localhost",
+    "start": "firebase serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uwidcit/info1601demo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/uwidcit/info1601demo/issues"
+  },
+  "homepage": "https://github.com/uwidcit/info1601demo#readme"
+}

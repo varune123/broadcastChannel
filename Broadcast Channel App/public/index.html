@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+
+<meta name="title" content="Broadcast Channel API">
+<meta name="description" content="API for communication between different browser contexts in the same origin.">
+<meta name="image" content="">
+<meta name="site" content="">
+
+<link type="text/css" rel="stylesheet" href="./css/fonts.css" />
+<link type="text/css" rel="stylesheet" href="./css/style.css" />
+
+<title>Web APIs Broadcast Channel</title>
+
+<style>
+
+    .chatArea {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    #displayMsg {
+        overflow-x: auto;
+        height: 236px;
+    }
+
+    .chat-msg {
+        //height: 40px;
+        //display: flex;
+        //flex-direction: row;
+        //align-items: center;
+
+        width:85%;
+        margin: 2px;
+        padding: 2px;
+        //border-left-color:#6ca6cd;
+        //border-left-style:solid;
+
+        background-color: #4a708b;
+        border-radius: 2px;
+        position: relative;
+        color: white;
+
+        font-size: 16px;
+    }
+
+    .chat-msg::before, .chat-msg::after {
+        content: ' ';
+        border: solid transparent;
+        background-color: #4a708b;
+        //top: 15px;
+        //right:100%;
+        position: absolute;
+
+        height:0;
+        width:0;
+        pointer-events: none;
+        border-bottom: 10px;
+        border-left: 10px;
+        border-right: 10px;
+    }
+
+    .page-info {
+        font-size:14px;
+        border-bottom-color: #6ca6cd;
+        border-bottom-style: solid;
+    }
+    
+
+</style>
+
+<body>
+    <header>
+        <h2>Web Broadcast Channel<h2>
+        <button onclick="id=changeUsername(userId)" style="position:absolute;right:0px;top:0px;">Change Username</button>
+    </header>
+    <div class="web-api-cnt">
+
+        <div class="web-api-card">
+            <div class="web-api-card-head">
+                Chat Room
+            </div>
+            <div class="web-api-card-body">
+                <div class="page-info">Open this page in another <i>tab</i>, <i>window</i> or <i>iframe</i> to chat with them.</div>
+                <div id="error" class="close"></div>
+                <div id="displayMsg" style="font-size:19px;text-align:left;">
+                </div>
+                <div class="chatArea">
+                    <input id="input" type="text" placeholder="Type your message" />
+                    <button onclick="sendMsg()">Send Msg to Channel</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+<script>
+    const l = console.log;
+    try {
+        var politicsChannel = new BroadcastChannel("politics")
+        politicsChannel.onmessage = onMessage
+        var userId = prompt("Enter username to continue: ")
+    } catch(e) {
+        error.innerHTML = "BroadcastChannel API not supported in this device."
+        error.classList.remove("close")
+    }
+
+    function changeUsername(id){
+        var temp= id;
+        id= prompt("Enter username: ")
+        if(id===null){
+            return
+        }
+        
+        var newHTML=`<i>${temp} changed username to ${id}</i>`;
+        displayMsg.innerHTML= displayMsg.innerHTML + newHTML + "<br>"
+        userId= id
+        input.value= newHTML
+        
+        
+        politicsChannel.postMessage({msg:newHTML,id:userId})
+
+        input.value = ""
+
+        displayMsg.scrollTop = displayMsg.scrollHeight
+
+    }
+    
+
+    input.addEventListener("keydown", (e) => {
+        if(e.keyCode === 13 && e.target.value.trim().length > 0) {
+            sendMsg()            
+        }
+    })
+
+    function onMessage(e) {     
+        var {msg,id}=e.data   
+        var time= new Date().toLocaleTimeString();
+        time=`<i><span style="font-size:10px;position:absolute;right:0px;">${time}</span></i>`
+
+        const newHTML = "<div class='chat-msg'><span><i>"+id+"</i>: "+msg+"</span>"+time+"</div>"
+        displayMsg.innerHTML = displayMsg.innerHTML + newHTML
+        displayMsg.scrollTop = displayMsg.scrollHeight
+    }
+
+    function sendMsg() {
+        politicsChannel.postMessage({msg:input.value,id:userId})
+
+        var time= new Date().toLocaleTimeString();
+        time=`<i><span style="font-size:10px;position:absolute;right:0px;">${time}</span></i>`
+
+        const newHTML = "<div class='chat-msg'><span><i>Me</i>: "+input.value+"</span>"+time+"</div>"
+        displayMsg.innerHTML = displayMsg.innerHTML + newHTML
+
+        input.value = ""
+
+        displayMsg.scrollTop = displayMsg.scrollHeight
+    }
+        
+
+</script>
+
+</html>
